@@ -17,7 +17,7 @@ This is a typical cycle of exploring a new API:
 	<li>assume that something is messed up</li>
 	<li>read the source code and realize that the developer was actually right all along</li>
 	<li>It can frustrating to use new libraries but don't worry - you will get through it! </li>
-	</ul>
+</ul>
 
 <h2> OVERVIEW </h2>
 Here's a high-level overview of tasks we'll be accomplishing:
