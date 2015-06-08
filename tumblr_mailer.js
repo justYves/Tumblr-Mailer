@@ -2,6 +2,9 @@ var fs = require("fs");
 var ejs = require("ejs");
 var tumblr = require("tumblr.js");
 
+var mandrill = require("mandrill-api/mandrill");
+var mandrill_client = new mandrill.Mandrill("EeTbWeeBVFE5nnuTU7Za4w");
+
 var csvFile = fs.readFileSync("friend_list.csv","utf8");
 var emailTemplate = fs.readFileSync('email_template.html', 'utf-8');
 
@@ -12,9 +15,6 @@ var client = tumblr.createClient({
 	token_secret: 'C7TVRP5jwNwKSIxLVUrwhi7xITzIsvigDTSZVQ0nDsRRP8ZPgP'
 });
 
-
-client.posts("yvesyuen.tumblr.com",function(err,blog){	
-
 	//Parser
 	var csvParse = function(csvFile){
 		var csv_data = []; 
@@ -22,6 +22,7 @@ client.posts("yvesyuen.tumblr.com",function(err,blog){
 	var csvFileArray = csvFile.split("\n");
 	//save the first line of the csv into an the header Array
 	var header = csvFileArray.shift().split(",");
+
 
 	//Loop through the friend's data
 	for (var i = 0 ; i < csvFileArray.length; i++) {
@@ -36,6 +37,43 @@ client.posts("yvesyuen.tumblr.com",function(err,blog){
 	 return csv_data;
 	};
 
+	//email function
+	function sendEmail(to_name, to_email, from_name, from_email, subject, message_html){
+		var message = {
+			"html": message_html,
+			"subject": subject,
+			"from_email": from_email,
+			"from_name": from_name,
+			"to": [{
+				"email": to_email,
+				"name": to_name
+			}],
+			"important": false,
+			"track_opens": true,    
+			"auto_html": false,
+			"preserve_recipients": true,
+			"merge": false,
+			"tags": [
+			"Fullstack_Tumblrmailer_Workshop"
+			]    
+		};
+		var async = false;
+		var ip_pool = "Main Pool";
+		mandrill_client.messages.send({"message": message, "async": async, "ip_pool": ip_pool}, function(result) {
+        // console.log(message);
+        // console.log(result);   
+      }, function(e) {
+        // Mandrill returns the error as an object with name and message keys
+        console.log('A mandrill error occurred: ' + e.name + ' - ' + e.message);
+        // A mandrill error occurred: Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+      });
+	}
+
+
+	client.posts("yvesyuen.tumblr.com",function(err,blog){	
+
+
+
 	//get posts
 	var latestPosts = []; 
 	var today = new Date();
@@ -45,7 +83,7 @@ client.posts("yvesyuen.tumblr.com",function(err,blog){
 		postDate = new Date(post["date"]);
 		var dateDiff = (today - postDate) / MS_PER_DAY;
 
-		if(dateDiff < 20) {
+		if(dateDiff < 7) {
 			var latestPost = {
 				title : post["title"],
 				href : post["post_url"]
@@ -64,7 +102,7 @@ client.posts("yvesyuen.tumblr.com",function(err,blog){
 				numMonthsSinceContact: friend["numMonthsSinceContact"],
 				latestPosts: latestPosts
 			});
-			console.log(customizedTemplate);
+			sendEmail(friend.firstName, friend.emailAddress, "Yves Y", "yves.j.yuen@gmail.com", "test", customizedTemplate);
 		})
 	};
 
