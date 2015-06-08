@@ -3,16 +3,16 @@ var ejs = require("ejs");
 var tumblr = require("tumblr.js");
 
 var mandrill = require("mandrill-api/mandrill");
-var mandrill_client = new mandrill.Mandrill("EeTbWeeBVFE5nnuTU7Za4w");
+var mandrill_client = new mandrill.Mandrill("KEY");
 
 var csvFile = fs.readFileSync("friend_list.csv","utf8");
 var emailTemplate = fs.readFileSync('email_template.html', 'utf-8');
 
 var client = tumblr.createClient({
-	consumer_key: 'C1E1cyo3hX8PPO4AD6uehGVcEMwe9jsHCRLHnYbJJ6m7XwniRR',
-	consumer_secret: 'mAbkoVX0ZsJu4ri6CtO7O04xQen5HS1tN7IvLJWEZTCft5ssf2',
-	token: 'PFZhU4vwriHPNeYpDaFHuEwER9YtNi3G54prT2JdaxbMlyKma8',
-	token_secret: 'C7TVRP5jwNwKSIxLVUrwhi7xITzIsvigDTSZVQ0nDsRRP8ZPgP'
+	consumer_key: 'KEY',
+	consumer_secret: 'KEY',
+	token: 'KEY',
+	token_secret: 'KEY'
 });
 
 	//Parser
@@ -108,6 +108,7 @@ var client = tumblr.createClient({
 
 	emailCreator(csvFile, emailTemplate);
 });
+
 
 
 
